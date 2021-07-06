@@ -41,10 +41,9 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:text="We now have 3 branches. Look below for the address and info." />
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="We now have 3 branches.\nLook below for the address and info." />
 
     <Spinner
         android:id="@+id/locationSpinner"

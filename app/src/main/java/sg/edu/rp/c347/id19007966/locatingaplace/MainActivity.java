@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    
+
     Marker northMarker, centralMarker, eastMarker;
     GoogleMap map;
 
