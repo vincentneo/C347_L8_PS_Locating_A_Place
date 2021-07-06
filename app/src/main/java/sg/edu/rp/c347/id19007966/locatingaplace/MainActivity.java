@@ -10,7 +10,10 @@ import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,11 +25,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    Button buttonNorth, buttonCentral, buttonEast;
+public class MainActivity extends AppCompatActivity {
+    
     Marker northMarker, centralMarker, eastMarker;
     GoogleMap map;
+
+    Spinner locationSpinner;
+    ArrayList<String> locationNames;
 
     // singapore centre's coordinates
     LatLng singaporeCoords = new LatLng(1.3521, 103.8198);
@@ -48,13 +55,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonNorth = findViewById(R.id.buttonNorth);
-        buttonCentral = findViewById(R.id.buttonCentral);
-        buttonEast = findViewById(R.id.buttonEast);
+        locationSpinner = findViewById(R.id.locationSpinner);
 
-        buttonNorth.setOnClickListener(this::jumpToLocation);
-        buttonCentral.setOnClickListener(this::jumpToLocation);
-        buttonEast.setOnClickListener(this::jumpToLocation);
+        locationNames = new ArrayList<>();
+        locationNames.add("Select a location");
+        locationNames.add("HQ - North");
+        locationNames.add("Central");
+        locationNames.add("East");
+
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, locationNames);
+
+        locationSpinner.setAdapter(adapter);
+        locationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int index, long l) {
+                switch(index) {
+                    case 1:
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(northCoords, 17));
+                        break;
+                    case 2:
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centralCoords, 17));
+                        break;
+                    case 3:
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(eastCoords, 17));
+                        break;
+                    default:
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(singaporeCoords, 10));
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
@@ -68,32 +101,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-
-    void jumpToLocation(View btn) {
-        int btnId = btn.getId();
-
-        switch(btnId) {
-            case R.id.buttonNorth:
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(northCoords, 17));
-                break;
-            case R.id.buttonCentral:
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(centralCoords, 17));
-                break;
-            case R.id.buttonEast:
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(eastCoords, 17));
-                break;
-            default:
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(singaporeCoords, 10));
-                break;
-        }
-    }
-
     void setupMarkers() {
         MarkerOptions northMarkerOptions =
                 new MarkerOptions()
                         .position(northCoords)
-                        .title("HQ - North")
+                        .title(locationNames.get(1))
                         .snippet("Block 333, Admiralty Ave 3, 765654\n"
                                 + "Operating hours: 10am-5pm\n"
                                 + "Tel:65433456")
@@ -104,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         MarkerOptions centralMarkerOptions =
                 new MarkerOptions()
                         .position(centralCoords)
-                        .title("Central")
+                        .title(locationNames.get(2))
                         .snippet("Block 3A, Orchard Ave 3, 134542\n"
                                 + "Operating hours: 11am-8pm\n"
                                 + "Tel:67788652")
@@ -115,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         MarkerOptions eastMarkerOptions =
                 new MarkerOptions()
                         .position(eastCoords)
-                        .title("East")
+                        .title(locationNames.get(3))
                         .snippet("Block 555, Tampines Ave 3, 287788\n"
                                 + "Operating hours: 9am-5pm\n"
                                 + "Tel:66776677")
