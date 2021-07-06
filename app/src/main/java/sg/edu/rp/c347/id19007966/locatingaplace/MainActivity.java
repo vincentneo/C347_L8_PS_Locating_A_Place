@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MainActivity extends AppCompatActivity {
 
     Button buttonNorth, buttonCentral, buttonEast;
+    Marker northMarker, centralMarker, eastMarker;
     GoogleMap map;
 
     // singapore centre's coordinates
@@ -59,13 +61,15 @@ public class MainActivity extends AppCompatActivity {
 
         mapFragment.getMapAsync(googleMap -> {
             map = googleMap;
+            map.setOnMarkerClickListener(this::onMarkerClick);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(singaporeCoords, 10));
-
             setupMarkers();
             setMapUIElements();
             setupCurrentLocation();
         });
     }
+
+
 
     void jumpToLocation(View btn) {
         int btnId = btn.getId();
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setupMarkers() {
-        MarkerOptions northMarker =
+        MarkerOptions northMarkerOptions =
                 new MarkerOptions()
                         .position(northCoords)
                         .title("HQ - North")
@@ -96,9 +100,9 @@ public class MainActivity extends AppCompatActivity {
                                 + "Tel:65433456")
                         .icon(BitmapDescriptorFactory
                                 .fromResource(android.R.drawable.star_big_on));
-        map.addMarker(northMarker);
+        northMarker = map.addMarker(northMarkerOptions);
 
-        MarkerOptions centralMarker =
+        MarkerOptions centralMarkerOptions =
                 new MarkerOptions()
                         .position(centralCoords)
                         .title("Central")
@@ -107,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
                                 + "Tel:67788652")
                         .icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        map.addMarker(centralMarker);
+        centralMarker = map.addMarker(centralMarkerOptions);
 
-        MarkerOptions eastMarker =
+        MarkerOptions eastMarkerOptions =
                 new MarkerOptions()
                         .position(eastCoords)
                         .title("East")
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                                 + "Tel:66776677")
                         .icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-        map.addMarker(eastMarker);
+        eastMarker = map.addMarker(eastMarkerOptions);
     }
 
     void setMapUIElements() {
@@ -140,5 +144,11 @@ public class MainActivity extends AppCompatActivity {
             String[] fineLoc = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
             ActivityCompat.requestPermissions(MainActivity.this, fineLoc, 0);
         }
+    }
+
+    boolean onMarkerClick(final Marker marker) {
+        String title = marker.getTitle();
+        Toast.makeText(MainActivity.this, title, Toast.LENGTH_SHORT).show();
+        return false;
     }
 }
