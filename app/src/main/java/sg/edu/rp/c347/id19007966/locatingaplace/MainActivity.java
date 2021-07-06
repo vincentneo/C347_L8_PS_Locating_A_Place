@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         mapFragment.getMapAsync(googleMap -> {
             map = googleMap;
-            map.setOnMarkerClickListener(this::onMarkerClick);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(singaporeCoords, 10));
             setupMarkers();
             setMapUIElements();
@@ -123,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
                         .icon(BitmapDescriptorFactory
                                 .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         eastMarker = map.addMarker(eastMarkerOptions);
+
+        map.setOnMarkerClickListener(this::onMarkerClick);
     }
 
     void setMapUIElements() {
@@ -149,6 +150,6 @@ public class MainActivity extends AppCompatActivity {
     boolean onMarkerClick(final Marker marker) {
         String title = marker.getTitle();
         Toast.makeText(MainActivity.this, title, Toast.LENGTH_SHORT).show();
-        return false;
+        return false; // returning true will fully override default behaviour.
     }
 }
